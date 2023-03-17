@@ -9,18 +9,22 @@ export class TodoComponent {
   displayAll: boolean = false;
   txtItem: string = '';
   private name: String = 'Name';
-  private todoItems: TodoItem[] = [
-    {
-      id: 1,
-      description: 'Breakfast',
-      action: false,
-    },
-    {
-      id: 2,
-      description: 'Sport',
-      action: true,
-    },
-  ];
+  private todoItems: TodoItem[] = [];
+
+  /**
+   *
+   */
+  constructor() {
+    this.todoItems = this.getItemsFromLS();
+  }
+
+  getItemsFromLS() {
+    let items: TodoItem[] = [];
+    let value = localStorage.getItem('todoItems');
+
+    if (value != null) items = JSON.parse(value);
+    return items;
+  }
   getName() {
     return this.name;
   }
@@ -33,16 +37,27 @@ export class TodoComponent {
     if (this.displayAll) return this.todoItems;
     return this.todoItems.filter((i) => !i.action);
   }
-  setTodoItems(item: any) {
-    if (item == '') {
+  setTodoItems() {
+    if (this.txtItem == '') {
       alert('Input Entry');
       return;
     }
+
     this.todoItems.push({
       id: Math.random(),
-      description: item,
+      description: this.txtItem,
       action: false,
     });
+    localStorage.setItem('todoItems', JSON.stringify(this.todoItems));
+    this.txtItem = '';
+  }
+
+  getBtnClasses() {
+    return {
+      disabled: this.txtItem.length == 0,
+      'btn-secondary': this.txtItem.length == 0,
+      'btn-primary': this.txtItem.length > 0,
+    };
   }
 }
 
